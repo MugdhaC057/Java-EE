@@ -1,0 +1,322 @@
+mysql> use mydb
+Database changed
+mysql> select * from dept;
++--------+-------+-----------+
+| deptno | dname | loc       |
++--------+-------+-----------+
+|      1 | acc   | mumbai    |
+|      2 | mktg  | delhi     |
+|      3 | trg   | banglore  |
+|      4 | Trg   | Bangalore |
++--------+-------+-----------+
+******************************************************************************************************
+
+import java.sql.*;
+public class jdb1 
+{
+	public static void main(String args[])
+	{
+		String ss="jdbc:mysql://localhost:3306/mydb";
+		try(Connection con=DriverManager.getConnection(ss,"root","Sanju@(1975)"))
+		{
+System.out.println("Implementation class is\t"+con.getClass()); 
+Statement st=con.createStatement();
+ResultSet rs=st.executeQuery("select * from dept");
+while(rs.next())
+{
+	int no=rs.getInt("deptno");
+	String name=rs.getString("dname");
+	String add=rs.getString("loc");
+	System.out.println(no+"\t"+name+"\t"+add);
+}
+}
+catch(Exception ee)
+{
+	System.out.println(ee);
+}
+}
+}	
+
+F:\EDAC\Java EE\Practise>javac jdb1.java
+
+F:\EDAC\Java EE\Practise>set classpath=%classpath%;mysql-connector-java-8.0.22.jar;
+
+F:\EDAC\Java EE\Practise>java jdb1
+Implementation class is class com.mysql.cj.jdbc.ConnectionImpl
+Details of Dept by explicitly registering
+deptno  dname   loc
+1       1       acc     acc     mumbai  mumbai
+2       2       mktg    mktg    delhi   delhi
+3       3       trg     trg     banglore        banglore
+4       4       Trg     Trg     Bangalore       Bangalore
+******************************************************************************************************
+
+import java.sql.*;
+public class jdb2
+{
+	public static void main(String args[])
+	{
+		String ss="jdbc:mysql://localhost:3306/mydb";
+		try(Connection con=DriverManager.getConnection(ss,"root","Sanju@(1975)"))
+		{
+System.out.println("Implementation class is\t"+con.getClass()); 
+Statement st=con.createStatement();
+ResultSet rs=st.executeQuery("select * from dept");
+ResultSetMetaData rms=rs.getMetaData();
+int col=rms.getColumnCount();
+System.out.println("Details of Dept by explicitly registering");
+	for(int i=1;i<=col;i++)
+	{
+		System.out.print(rms.getColumnName(i)+"\t");
+	}
+while(rs.next())
+{
+System.out.print("\n");
+	for(int i=1;i<=col;i++)
+	{
+		System.out.print(rs.getObject(rms.getColumnName(i))+"\t");
+	System.out.print(rs.getObject(i)+"\t");
+
+	}
+
+}
+}
+catch(Exception ee)
+{
+	System.out.println(ee);
+}
+}
+}						
+
+F:\EDAC\Java EE\Practise>java jdb2
+Implementation class is class com.mysql.cj.jdbc.ConnectionImpl
+Details of Dept by explicitly registering
+deptno  dname   loc
+1       1       acc     acc     mumbai  mumbai
+2       2       mktg    mktg    delhi   delhi
+3       3       trg     trg     banglore        banglore
+4       4       Trg     Trg     Bangalore       Bangalore
+******************************************************************************************************
+import java.sql.*;
+public class jdb3
+{
+	public static void main(String args[])
+	{
+		String ss="jdbc:mysql://localhost:3306/mydb";
+		try(Connection con=DriverManager.getConnection(ss,"root","Sanju@(1975)"))
+		{
+System.out.println("Implementation class is\t"+con.getClass());
+Statement st=con.createStatement();
+int val=st.executeUpdate("update dept set loc='bombay'");
+if(val>0)
+{
+	System.out.println("Records updated");
+}
+else
+{
+	System.out.println("can not update records");
+}	
+}
+catch(Exception ee)
+{
+	System.out.println(ee);
+}
+}
+}
+
+
+F:\EDAC\Java EE\Practise>java jdb3
+Implementation class is class com.mysql.cj.jdbc.ConnectionImpl
+Records updated
+
+
+mysql> select * from dept;
++--------+-------+--------+
+| deptno | dname | loc    |
++--------+-------+--------+
+|      1 | acc   | bombay |
+|      2 | mktg  | bombay |
+|      3 | trg   | bombay |
+|      4 | Trg   | bombay |
++--------+-------+--------+
+4 rows in set (0.00 sec)
+******************************************************************************************************
+import java.sql.*;
+public class jdb4 
+{
+	public static void main(String args[])
+	{
+		String ss="jdbc:mysql://localhost:3306/mydb";
+		try(Connection con=DriverManager.getConnection(ss,"root","Sanju@(1975)"))
+		{
+System.out.println("Implementation class is\t"+con.getClass());
+PreparedStatement pst=con.prepareStatement("select * from dept");
+ResultSet rs=pst.executeQuery();
+while(rs.next())
+{
+	int  no=rs.getInt("deptno");
+	String name=rs.getString("dname");
+	String loc=rs.getString("loc");
+	System.out.println(no+"\t"+name+"\t"+loc);
+}
+
+}
+catch(Exception ee)
+{
+	System.out.println(ee);
+}
+}
+}
+
+F:\EDAC\Java EE\Practise>java jdb4
+Implementation class is class com.mysql.cj.jdbc.ConnectionImpl
+1       acc     bombay
+2       mktg    bombay
+3       trg     bombay
+4       Trg     bombay
+
+******************************************************************************************************
+import java.sql.*;
+public class jdb5 
+{
+	public static void main(String args[])
+	{
+		String ss="jdbc:mysql://localhost:3306/mydb";
+		try(Connection con=DriverManager.getConnection(ss,"root","Sanju@(1975)"))
+		{
+System.out.println("Implementation class is\t"+con.getClass());
+PreparedStatement pst=con.prepareStatement("update dept set loc=?");
+pst.setString(1,"delhi");
+	//replace 1'st question mark with "delhi"
+int mod=pst.executeUpdate();
+
+if(mod>0)
+{
+	System.out.println("Records are successfully added");
+}
+}
+catch(Exception ee)
+{
+	System.out.println(ee);
+}
+}
+}
+
+
+F:\EDAC\Java EE\Practise>javac jdb5.java
+
+F:\EDAC\Java EE\Practise>set classpath=%classpath%;mysql-connector-java-8.0.22.jar;
+
+F:\EDAC\Java EE\Practise>java jdb5
+Implementation class is class com.mysql.cj.jdbc.ConnectionImpl
+Records are successfully added
+
+mysql> select * from dept;
++--------+-------+-------+
+| deptno | dname | loc   |
++--------+-------+-------+
+|      1 | acc   | delhi |
+|      2 | mktg  | delhi |
+|      3 | trg   | delhi |
+|      4 | Trg   | delhi |
++--------+-------+-------+
+
+******************************************************************************************************
+
+mysql> delimiter //
+mysql> create procedure mypro1(in no int,out name varchar(20))
+    -> begin
+    -> select dname into name from dept where deptno=no;
+    -> end//
+Query OK, 0 rows affected (1.39 sec)
+
+
+import java.sql.*;
+public class jdb6 
+{
+	public static void main(String args[])
+	{
+		String ss="jdbc:mysql://localhost:3306/mydb";
+		try(Connection con=DriverManager.getConnection(ss,"root","Sanju@(1975)"))
+		{
+CallableStatement cst=con.prepareCall("{ call mypro1(?,?)}");
+cst.setInt(1,3);
+cst.execute();
+String name=cst.getString(2);
+System.out.println("dept.name retrieved is  "+name);
+}
+catch(Exception ee)
+{
+	System.out.println(ee);
+}
+}
+}
+
+
+F:\EDAC\Java EE\Practise>javac jdb6.java
+
+F:\EDAC\Java EE\Practise>set classpath=%claspath%;mysql-connector-java-8.0.22.jar;
+
+F:\EDAC\Java EE\Practise>java jdb6
+dept.name retrieved is  trg				
+
+******************************************************************************************************
+import java.sql.*;
+public class jdb8
+{
+	public static void main(String args[])throws Exception
+	{
+		String ss="jdbc:mysql://localhost:3306/mydb";
+		try(Connection con=DriverManager.getConnection(ss,"root","Sanju@(1975)"))
+		{
+			try
+			{
+con.setAutoCommit(false);
+Statement st=con.createStatement();
+int a=st.executeUpdate("update dept set loc='bombay'");
+int b=st.executeUpdate("insert into dept values(10,'abc','aaa')");
+con.commit();
+}
+catch(Exception ee)
+{
+	con.rollback();		
+	System.out.println(ee);
+}
+		con.setAutoCommit(true);
+		}
+		catch(Exception e)
+		{
+			System.out.println(e);
+		}
+}
+}
+
+F:\EDAC\Java EE\Practise>javac jdb8.java
+
+F:\EDAC\Java EE\Practise>set classpath=%claspath%;mysql-connector-java-8.0.22.jar;
+
+F:\EDAC\Java EE\Practise>java jdb8
+
+mysql> select * from dept;
+    -> //
++--------+-------+--------+
+| deptno | dname | loc    |
++--------+-------+--------+
+|      1 | acc   | bombay |
+|      2 | mktg  | bombay |
+|      3 | trg   | bombay |
+|      4 | Trg   | bombay |
+|      5 | mhgk  | bombay |
+|      6 | asel  | bombay |
+|     10 | abc   | aaa    |
++--------+-------+--------+
+		
+******************************************************************************************************
+
+
+
+
+
+
+						
+					
